@@ -1,0 +1,48 @@
+{% extends "business_portal/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2>Business Approvals</h2>
+        <p class="text-muted">Apply for various business licenses and approvals</p>
+    </div>
+</div>
+
+<div class="row">
+    {% for approval_type in approval_types %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">{{ approval_type.name }}</h5>
+            </div>
+            <div class="card-body">
+                <p>{{ approval_type.description }}</p>
+                <ul class="list-group list-group-flush mb-3">
+                    <li class="list-group-item">
+                        <strong>Department:</strong> {{ approval_type.department }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Processing Time:</strong> {{ approval_type.processing_time }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Fees:</strong> ₹{{ approval_type.fees }}
+                    </li>
+                </ul>
+            </div>
+            <div class="card-footer bg-transparent">
+                <a href="{% url 'create_application' approval_type.id %}" class="btn btn-info w-100">
+                    Apply Now
+                </a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info">
+            No approval types available at the moment.
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

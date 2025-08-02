@@ -1,0 +1,54 @@
+{% extends "business_portal/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2>Government Schemes</h2>
+        <p class="text-muted">Explore various government schemes available for your business</p>
+    </div>
+</div>
+
+<div class="row">
+    {% for scheme in schemes %}
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-success text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">{{ scheme.name }}</h5>
+                    <span class="badge bg-light text-dark">
+                        {% if scheme.end_date %}
+                            Ends: {{ scheme.end_date|date:"d M Y" }}
+                        {% else %}
+                            Ongoing
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+            <div class="card-body">
+                <p>{{ scheme.description|truncatechars:150 }}</p>
+                <ul class="list-group list-group-flush mb-3">
+                    <li class="list-group-item">
+                        <strong>Eligibility:</strong> {{ scheme.eligibility|truncatechars:100 }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Benefits:</strong> {{ scheme.benefits|truncatechars:100 }}
+                    </li>
+                </ul>
+            </div>
+            <div class="card-footer bg-transparent">
+                <a href="{% url 'scheme_details' scheme.id %}" class="btn btn-outline-success">
+                    View Details & Apply
+                </a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info">
+            No government schemes available at the moment.
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

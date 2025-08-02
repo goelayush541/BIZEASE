@@ -1,0 +1,89 @@
+{% extends "business_portal/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .signature-pad {
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        background-color: white;
+        width: 100%;
+        height: 200px;
+        margin-bottom: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">Add Digital Signature</h3>
+            </div>
+            <div class="card-body">
+                <p>You are signing the document: <strong>{{ document.get_document_type_display }}</strong></p>
+                <p>for application: <strong>{{ document.application.application_number }}</strong></p>
+                
+                <hr>
+                
+                <div class="signature-pad-container">
+                    <canvas id="signature-pad" class="signature-pad"></canvas>
+                </div>
+                
+                <form id="signature-form" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" id="id_signature_image" name="signature_image">
+                    
+                    <div class="d-flex justify-content-between mb-3">
+                        <button type="button" id="clear-signature" class="btn btn-outline-danger">
+                            <i class="fas fa-eraser"></i> Clear
+                        </button>
+                        <button type="button" id="save-signature" class="btn btn-success">
+                            <i class="fas fa-save"></i> Save Signature
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const canvas = document.getElementById('signature-pad');
+    const signaturePad = new SignaturePad(canvas, {
+        backgroundColor: 'rgb(255, 255, 255)',
+        penColor: 'rgb(0, 0, 0)'
+    });
+    
+    function resizeCanvas() {
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
+        canvas.getContext('2d').scale(ratio, ratio);
+        signaturePad.clear();
+    }
+    
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    
+    document.getElementById('clear-signature').addEventListener('click', function() {
+        signaturePad.clear();
+    });
+    
+    document.getElementById('save-signature').addEventListener('click', function() {
+        if (signaturePad.isEmpty()) {
+            alert('Please provide a signature first.');
+        } else {
+            const dataURL = signaturePad.toDataURL('image/png');
+            document.getElementById('id_signature_image').value = dataURL;
+            document.getElementById('signature-form').submit();
+        }
+    });
+});
+</script>
+{% endblock %}

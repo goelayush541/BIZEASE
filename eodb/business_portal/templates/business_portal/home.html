@@ -1,0 +1,120 @@
+{% extends "business_portal/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="hero-section bg-primary text-white py-5 mb-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1 class="display-4 fw-bold">Ease of Doing Business in Delhi</h1>
+                <p class="lead">A single window portal for all your business needs in Delhi</p>
+                {% if not user.is_authenticated %}
+                    <a href="{% url 'register' %}" class="btn btn-light btn-lg me-2">Register Your Business</a>
+                    <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg">Login</a>
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                <img src="{% static 'images/business-hero.png' %}" alt="Business Illustration" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row mb-5">
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-file-alt fa-3x text-primary mb-3"></i>
+                    <h3>Approvals</h3>
+                    <p>Apply for various business licenses and approvals through a single window system.</p>
+                    <a href="{% url 'approval_types' %}" class="btn btn-outline-primary">View Approvals</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-hand-holding-usd fa-3x text-success mb-3"></i>
+                    <h3>Schemes</h3>
+                    <p>Explore government schemes and incentives available for your business.</p>
+                    <a href="{% url 'government_schemes' %}" class="btn btn-outline-success">View Schemes</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-bell fa-3x text-warning mb-3"></i>
+                    <h3>Compliances</h3>
+                    <p>Track and manage your business compliances with reminders and alerts.</p>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'compliances' %}" class="btn btn-outline-warning">View Compliances</a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-outline-warning">Login to View</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">Latest Schemes</h4>
+                </div>
+                <div class="card-body">
+                    {% if schemes %}
+                        <div class="list-group">
+                            {% for scheme in schemes %}
+                                <a href="{% url 'scheme_details' scheme.id %}" class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1">{{ scheme.name }}</h5>
+                                        <small>Ends: {{ scheme.end_date|date:"d M Y"|default:"Ongoing" }}</small>
+                                    </div>
+                                    <p class="mb-1">{{ scheme.description|truncatechars:100 }}</p>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No active schemes currently.</p>
+                    {% endif %}
+                </div>
+                <div class="card-footer text-end">
+                    <a href="{% url 'government_schemes' %}" class="btn btn-sm btn-outline-success">View All Schemes</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">Latest News</h4>
+                </div>
+                <div class="card-body">
+                    {% if news %}
+                        <div class="list-group">
+                            {% for item in news %}
+                                <a href="{% url 'news_detail' item.id %}" class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1">{{ item.title }}</h5>
+                                        <small>{{ item.publish_date|date:"d M Y" }}</small>
+                                    </div>
+                                    <p class="mb-1">{{ item.content|truncatechars:100 }}</p>
+                                    <small class="text-muted">Source: {{ item.source }}</small>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No news articles currently.</p>
+                    {% endif %}
+                </div>
+                <div class="card-footer text-end">
+                    <a href="{% url 'news' %}" class="btn btn-sm btn-outline-info">View All News</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,117 @@
+{% extends "business_portal/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2>Compliance Management</h2>
+        <p class="text-muted">Track and manage your business compliances</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addComplianceModal">
+            <i class="fas fa-plus"></i> Add Compliance
+        </button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Upcoming Compliances</h5>
+            </div>
+            <div class="card-body">
+                {% if compliances %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Due Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for compliance in compliances %}
+                            <tr>
+                                <td>{{ compliance.title }}</td>
+                                <td>{{ compliance.description|truncatechars:50 }}</td>
+                                <td>{{ compliance.due_date|date:"d M Y" }}</td>
+                                <td>
+                                    {% if compliance.is_completed %}
+                                    <span class="badge bg-success">Completed</span>
+                                    {% else %}
+                                    <span class="badge bg-{% if compliance.due_date < today %}danger{% else %}warning{% endif %}">
+                                        {% if compliance.due_date < today %}Overdue{% else %}Pending{% endif %}
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if not compliance.is_completed %}
+                                    <a href="{% url 'mark_compliance_complete' compliance.id %}" class="btn btn-sm btn-success">
+                                        <i class="fas fa-check"></i> Mark Complete
+                                    </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    No compliances found. Add a new compliance to get started.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Compliance Modal -->
+<div class="modal fade" id="addComplianceModal" tabindex="-1" aria-labelledby="addComplianceModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="addComplianceModalLabel">Add New Compliance</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" id="complianceForm">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        {{ compliance_form.title.label_tag }}
+                        {{ compliance_form.title }}
+                    </div>
+                    <div class="mb-3">
+                        {{ compliance_form.description.label_tag }}
+                        {{ compliance_form.description }}
+                    </div>
+                    <div class="mb-3">
+                        {{ compliance_form.due_date.label_tag }}
+                        {{ compliance_form.due_date }}
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="complianceForm" class="btn btn-primary">Save Compliance</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize modal if form has errors
+    {% if compliance_form.errors %}
+    var modal = new bootstrap.Modal(document.getElementById('addComplianceModal'));
+    modal.show();
+    {% endif %}
+});
+</script>
+{% endblock %}

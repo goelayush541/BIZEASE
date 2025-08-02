@@ -1,0 +1,114 @@
+{% extends "business_portal/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2>Dashboard</h2>
+        <p class="text-muted">Welcome back, {{ business.contact_person }}!</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{% url 'approval_types' %}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>New Application
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Recent Applications</h5>
+            </div>
+            <div class="card-body">
+                {% if applications %}
+                    <div class="list-group">
+                        {% for app in applications %}
+                            <a href="{% url 'application_details' app.id %}" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ app.approval_type.name }}</h6>
+                                    <small class="text-{{ app.status|yesno:'success,info,danger' }}">
+                                        {{ app.get_status_display }}
+                                    </small>
+                                </div>
+                                <small class="text-muted">{{ app.application_number }}</small>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">No applications yet.</p>
+                {% endif %}
+            </div>
+            <div class="card-footer text-end">
+                <a href="{% url 'approval_types' %}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0">Upcoming Compliances</h5>
+            </div>
+            <div class="card-body">
+                {% if compliances %}
+                    <div class="list-group">
+                        {% for compliance in compliances %}
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ compliance.title }}</h6>
+                                    <small class="text-{% if compliance.due_date < today %}danger{% else %}warning{% endif %}">
+                                        Due: {{ compliance.due_date|date:"d M Y" }}
+                                    </small>
+                                </div>
+                                <p class="mb-1 small">{{ compliance.description|truncatechars:50 }}</p>
+                                <div class="text-end">
+                                    <a href="{% url 'mark_compliance_complete' compliance.id %}" class="btn btn-sm btn-success">
+                                        <i class="fas fa-check me-1"></i>Mark Complete
+                                    </a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">No upcoming compliances.</p>
+                {% endif %}
+            </div>
+            <div class="card-footer text-end">
+                <a href="{% url 'compliances' %}" class="btn btn-sm btn-outline-warning">View All</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">Business Profile Summary</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <p><strong>Business Name:</strong> {{ business.business_name }}</p>
+                        <p><strong>Registration Number:</strong> {{ business.registration_number }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <p><strong>Business Type:</strong> {{ business.business_type }}</p>
+                        <p><strong>Established:</strong> {{ business.date_established|date:"d M Y" }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <p><strong>Contact Person:</strong> {{ business.contact_person }}</p>
+                        <p><strong>Contact Number:</strong> {{ business.contact_number }}</p>
+                    </div>
+                </div>
+                <div class="text-end mt-3">
+                    <a href="{% url 'business_profile' %}" class="btn btn-outline-info">
+                        <i class="fas fa-edit me-2"></i>Edit Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

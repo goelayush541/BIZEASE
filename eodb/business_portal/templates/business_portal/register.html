@@ -1,0 +1,72 @@
+{% extends "business_portal/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">Business Registration</h3>
+            </div>
+            <div class="card-body">
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    <h5 class="mb-3">Account Information</h5>
+                    <div class="mb-3">
+                        {{ user_form.username.label_tag }}
+                        {{ user_form.username }}
+                        <div class="invalid-feedback">
+                            Please choose a username.
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        {{ user_form.email.label_tag }}
+                        {{ user_form.email }}
+                        <div class="invalid-feedback">
+                            Please provide a valid email.
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        {{ user_form.password1.label_tag }}
+                        {{ user_form.password1 }}
+                        <div class="invalid-feedback">
+                            Please provide a password.
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        {{ user_form.password2.label_tag }}
+                        {{ user_form.password2 }}
+                        <div class="invalid-feedback">
+                            Passwords must match.
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">Register</button>
+                    </div>
+                </form>
+                <hr>
+                <p class="text-center">Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Form validation
+(function () {
+  'use strict'
+  const forms = document.querySelectorAll('.needs-validation')
+  Array.from(forms).forEach(form => {
+    form.addEventListener('submit', event => {
+      if (!form.checkValidity()) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+      form.classList.add('was-validated')
+    }, false)
+  })
+})()
+</script>
+{% endblock %}

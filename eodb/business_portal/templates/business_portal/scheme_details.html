@@ -1,0 +1,69 @@
+{% extends "business_portal/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2>{{ scheme.name }}</h2>
+        <p class="text-muted">
+            {% if scheme.end_date %}
+                Valid until: {{ scheme.end_date|date:"d M Y" }}
+            {% else %}
+                Ongoing scheme
+            {% endif %}
+        </p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h4 class="mb-3">Description</h4>
+                <p>{{ scheme.description }}</p>
+                
+                <h4 class="mb-3 mt-4">Eligibility Criteria</h4>
+                <p>{{ scheme.eligibility }}</p>
+                
+                <h4 class="mb-3 mt-4">Benefits</h4>
+                <p>{{ scheme.benefits }}</p>
+                
+                <h4 class="mb-3 mt-4">Application Process</h4>
+                <p>{{ scheme.application_process }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Scheme Details</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <strong>Start Date:</strong> {{ scheme.start_date|date:"d M Y" }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>End Date:</strong> {{ scheme.end_date|date:"d M Y"|default:"Ongoing" }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Status:</strong> 
+                        {% if scheme.is_active %}
+                            <span class="badge bg-success">Active</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Inactive</span>
+                        {% endif %}
+                    </li>
+                </ul>
+                
+                <div class="d-grid gap-2 mt-3">
+                    <a href="{{ scheme.website_link }}" target="_blank" class="btn btn-success">
+                        <i class="fas fa-external-link-alt"></i> Official Website
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
